@@ -1,0 +1,5 @@
+# SpringMVCPermissionSystem
+#手写一个权限管理系统
+#不使用springsecurity和apacheshiro框架。这样做的好处是为了以后更好的对权限进行扩展。
+#使用jsp可以更好的学习这些知识。学习可以使用jsp，工作使用前后端分离吧（工作效率高）
+#该项目使用springmvc架构，使用maven进行版本控制。前端界面使用bootstarp框架。目前已经把架构搭建完成，这段时间忙完了开始对界面进行开发。
