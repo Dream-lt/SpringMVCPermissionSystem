@@ -1,0 +1,101 @@
+<!DOCTYPE web-app PUBLIC
+        "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+    <display-name>Archetype Created Web Application</display-name>
+    
+    <!-- 指定spring的监听 -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    
+    <!-- 指定spring beans加载的配置文件 -->
+    <context-param>
+        <!-- 指定配置文件所在的目录,加了classpath之后会默认寻找resources这个文件夹，不然会寻找WEB-INF这个文件夹 -->
+        <param-name>contextConfigLocation</param-name>
+        <param-value>resources/*</param-value>
+    </context-param>
+    
+    <!-- 指定springMVC配置 -->
+    <servlet>
+        <!-- 名字是自己起的 -->
+        <servlet-name>springTest</servlet-name>
+        <!-- 指定那个类去处理,处理项目中的所有请求 -->
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    </servlet>
+    
+    <!-- 一对一配置 -->
+    <servlet-mapping>
+        <!-- 指定拦截请求的路径,"/"所有请求都进行处理 -->
+        <servlet-name>springTest</servlet-name>
+        <!-- "/"可以匹配 /login,/hello等这种文件，但不会匹配到 /hello.jsp这种格式 -->
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    
+    <!-- 对编码进行处理,是一个过滤器，对请求进行过滤 -->
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <!-- 指定参数 -->
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <!-- 强制编码,强制使用UTF-8的编码格式 -->
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    
+    <!-- filter的一对一映射标签 -->
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- druid配置 -->
+    <servlet>
+        <!-- 指定使用那个servlet去访问druid相关的请求 -->
+        <servlet-name>DruidStatServlet</servlet-name>
+        <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+        <!-- 配置druid登陆时的用户和密码 -->
+        <init-param>
+            <param-name>loginUsername</param-name>
+            <param-value>druid</param-value>
+        </init-param>
+        <init-param>
+            <param-name>loginPassword</param-name>
+            <param-value>druid</param-value>
+        </init-param>
+    </servlet>
+
+    <!-- 配置druid该如何请求 -->
+    <servlet-mapping>
+        <servlet-name>DruidStatServlet</servlet-name>
+        <url-pattern>/sys/druid/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- 配置filter,告诉druid要拦截那些请求 -->
+    <filter>
+        <filter-name>DruidWebStatFilter</filter-name>
+        <filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
+        <!-- 指定初始化的参数 -->
+        <init-param>
+            <param-name>exclusions</param-name>
+            <param-value>*.js,*.css,*.jpg,*.png,*.ico,/sys/druid/*</param-value>
+        </init-param>
+    </filter>
+   <filter-mapping>
+       <filter-name>DruidWebStatFilter</filter-name>
+       <url-pattern>/*</url-pattern>
+   </filter-mapping>
+
+    <!--  -->
+
+    <!-- 默认访问的路径,当项目启动时什么都不指定的话，会访问这个目录 -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+</web-app>

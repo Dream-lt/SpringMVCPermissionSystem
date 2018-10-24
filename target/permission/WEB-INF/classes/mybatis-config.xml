@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!-- mybitas的配置文件和spring是不一样的，这里引用是上面显示的 -->
+<configuration>
+    <!-- 所有的标签配置在configuration底下 -->
+    <settings>
+        <setting name="safeRowBoundsEnabled" value="true"/>
+        <setting name="cacheEnabled" value="false"/>
+        <!-- 自动生成主键ID -->
+        <setting name="useGenerateKeys" value="true"/>
+    </settings>
+
+    <!-- 起别名,type是本地的class。自己的一个类，在sql使用的时候直接可以使用别名，这样my.xml文件里面的类名特别简单, -->
+    <!--<typeAliases>-->
+        <!--<typeAlias type="feifei.xxx" alias="aa"/>-->
+    <!--</typeAliases>-->
+
+    <!-- 在mybatis里面做一些监听。在sql执行前后做些事情，相当于请求外面的拦截器 -->
+    <!--<plugins>-->
+        <!--<plugin interceptor=""></plugin>-->
+    <!--</plugins>-->
+
+    <!--<typeHandlers>-->
+        <!---->
+    <!--</typeHandlers>-->
+
+</configuration>
+
+
+

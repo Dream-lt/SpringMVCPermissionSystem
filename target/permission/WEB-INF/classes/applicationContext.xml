@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <!-- 配置springbean的配置文件 -->
+    <!-- 定义相关变量占位信息 -->
+    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <!-- 忽略一些不能处理的占位 -->
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <!-- 从哪里获取配置文件 -->
+        <property name="locations">
+            <list>
+                <!-- 加载settings.properties里面配置的值 -->
+                <value>classpath:settings.properties</value>
+            </list>
+        </property>
+
+    </bean>
+    <!-- 配置DB,连接到指定的数据库 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <!-- 指定相关参数 -->
+        <property name="driverClassName" value="${db.driverClassName}"/>
+        <property name="url" value="${db.url}"/>
+        <property name="username" value="${db.username}"/>
+        <property name="password" value="${db.password}"/>
+        <property name="initialSize" value="5"/>
+        <property name="minIdle" value="5"/>
+        <property name="maxActive" value="50"/>
+        <property name="maxWait" value="60000"/>
+        <property name="filters" value="stat,wall"/>
+    </bean>
+    <!-- sqlSessionFactory配置,指定sql的位置 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 配置文件地址 -->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <!-- 配置如何连接数据库，调用上面的配置dataSource -->
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 定义sql的位置,读取mapper文件夹下面所有的xml文件 -->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+    </bean>
+    <!-- 定义mapper的扫描,spring启动的时候首先加载这个类MapperScannerConfigurer -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 扫描java的那些bean -->
+        <property name="basePackage" value="feifei.dao"/>
+        <!-- 指定对应的sqlSessionFactory -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFatory"/>
+    </bean>
+    <!-- 事务 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!-- 启动事务注解 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    <!-- 配置druid的filter -->
+    <!-- 监控数据库相关的 -->
+    <bean id="stat-filter" class="com.alibaba.druid.filter.stat.StatFilter">
+        <!-- 如果超过3000毫秒，认为这个sql是慢sql，可能需要人工进行处理 -->
+        <property name="slowSqlMillis" value="3000"/>
+        <!-- 如果发现慢sql，用log记录下来 -->
+        <property name="logSlowSql" value="true"/>
+        <!-- 当我们记录sql的时候，多行sql可以认识 -->
+        <property name="mergeSql" value="true"/>
+    </bean>
+    <!-- 指定监控的数据库类型 -->
+    <bean id="wall-filter" class="com.alibaba.druid.wall.WallFilter">
+        <property name="dbType" value="mysql"/>
+    </bean>
+</beans>

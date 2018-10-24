@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <!-- 注释：这里定义的xml名称要和web.xml文件中的servlet-name一致 -->
+    <!-- 这个配置文件主要是配置与请求相关的东西，主要对应web.xml中的DispatcherServlet相对应 -->
+    <!-- 使用context上下文标签，annotation-config表示上下文的注解能被使用 -->
+    <context:annotation-config/>
+    <!-- 启动注解驱动的spring mvc功能,使用以下标签，项目中的一些注解都能成为spring的bean -->
+    <mvc:annotation-driven/>
+
+    <!-- HTTP请求处理 -->
+    <mvc:interceptors>
+        <bean class="feifei.common.HttpInterceptor" />
+    </mvc:interceptors>
+
+    <!-- 指定那些路径下面的注解会被处理,启动包扫描功能,通常会扫描controller、service的注解 -->
+    <!-- dao层通过mybatis来处理，所以dao层不用在这里进行处理 -->
+    <context:component-scan base-package="feifei.controller"/>
+    <context:component-scan base-package="feifei.service"/>
+
+    <!-- 配置获取spring上下文的bean。lazy-init="false"表示不是懒加载，当启动时直接加载 -->
+    <bean class="feifei.common.ApplicationContextHelper" lazy-init="false"/>
+
+    <!-- 配置两个核心的类 -->
+    <!-- 当我们定义一个springmvc的接口时，我们会使用RequestMapping这个注解，RequestMappingHandlerMapping这个类就是把我们定义好的RequestMapping这个注解找到对应的接口 -->
+    <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>-->
+    <!-- 相当于告诉我们springmvc项目发过来一个请求之后以什么样的数据返回给它，例如：json，jsp页面，或者下载的PDF文件等。这个注解的作用做视图渲染使用。 -->
+    <bean class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
+
+    <!-- 对json进行处理,jsonView这个名字是不能变得 -->
+    <!-- 相当于把我们定义的RequestMapping下面的类以json返回的时候会使用MappingJackson2JsonView这个类来处理 -->
+    <bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"/>
+
+    <!-- 对jsp页面进行处理 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- 这里需要指定两个参数 -->
+        <!-- 指定文件所在的路径，是从哪开始的 -->
+        <property name="prefix" value="/views/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!-- 处理全局异常配置bean -->
+    <bean class="feifei.common.ExceptionDeal"/>
+</beans>
